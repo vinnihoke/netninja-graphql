@@ -44,8 +44,8 @@ const RootQuery = new GraphQLObjectType({
 				// Code to get data from db / other source
 				// Parent comes into play when we look at relationships. We now need to tell graphQL what to do when someone makes this request. Doesn't matter where this data is stored, but this is where we would pull it... i.e. MongoDB or sqlite3.
 				
-				// Here we're using lodash to check for any book with an id of args.id
-				_.find(books, { id: args.id });
+				// Here we're using lodash to check for any book with an id of args.id. Research lodash.
+				return _.find(books, { id: args.id });
 			}
 		}
 	}
