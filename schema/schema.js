@@ -4,12 +4,25 @@ const _ = require('lodash');
 // This will describe the data on the graph, and how to interact with it.
 
 // I couldn't load in 'as' something else.
-const { GraphQLObjectType, GraphQLString, GraphQLSchema } = graphql;
+const { 
+	GraphQLObjectType,
+	GraphQLString,
+	GraphQLSchema,
+	GraphQLID,
+	GraphQLInt
+} = graphql;
 
 var books = [
-	{ name: "Book1", genre: "Fantasy", id: '1' },
-	{ name: "Book2", genre: "Fiction", id: '2' },
-	{ name: "Book3", genre: "Non-fiction", id: '3' }
+	// Note: ID's must be stored as strings. This is JSON
+	{ name: "Book1", genre: "Fantasy", id: "1" },
+	{ name: "Book2", genre: "Fiction", id: "2" },
+	{ name: "Book3", genre: "Non-fiction", id: "3" }
+]
+
+var authors = [
+	{ name: "Author 1", age: "34", id: "1" },
+	{ name: "Author 2", age: "55", id: "2" },
+	{ name: "Author 3", age: "72", id: "3" },
 ]
 
 // Creating an object type.
@@ -17,9 +30,19 @@ const BookType = new GraphQLObjectType({
 	name: 'Book',
 	// He specifically used the ES6 function.
 	fields: () => ({
-		id: { type: GraphQLString},
+		id: { type: GraphQLID},
 		name: { type: GraphQLString },
 		genre: { type: GraphQLString },
+	})
+})
+
+const AuthorType = new GraphQLObjectType({
+	name: 'Author',
+	// He specifically used the ES6 function.
+	fields: () => ({
+		id: { type: GraphQLID},
+		name: { type: GraphQLString },
+		age: { type: GraphQLInt },
 	})
 })
 
@@ -38,16 +61,29 @@ const RootQuery = new GraphQLObjectType({
 				// 	genre
 				// }
 			args: {
-				id: { type: GraphQLString }
+				id: { type: GraphQLID }
 			},
 			resolve(parent, args){
 				// Code to get data from db / other source
 				// Parent comes into play when we look at relationships. We now need to tell graphQL what to do when someone makes this request. Doesn't matter where this data is stored, but this is where we would pull it... i.e. MongoDB or sqlite3.
 				
 				// Here we're using lodash to check for any book with an id of args.id. Research lodash.
+
+
 				return _.find(books, { id: args.id });
 			}
+		},
+		// Book end, starting authors query
+		author: {
+			type: AuthorType,
+			args: {
+				id: { type: GraphQLID }
+			},
+			resolve(parent, args){
+				return _.find(authors, { id: args.id });
+			}
 		}
+
 	}
 });
 
