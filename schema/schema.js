@@ -9,14 +9,18 @@ const {
 	GraphQLString,
 	GraphQLSchema,
 	GraphQLID,
-	GraphQLInt
+	GraphQLInt,
+	GraphQLList
 } = graphql;
 
 var books = [
 	// Note: ID's must be stored as strings. This is JSON
-	{ name: "Book1", genre: "Fantasy", id: "1", authorId: '2' },
-	{ name: "Book2", genre: "Fiction", id: "2", authorId: '2' },
-	{ name: "Book3", genre: "Non-fiction", id: "3", authorId: '3' }
+	{ name: "Book 1", genre: "Fantasy", id: "1", authorId: '2' },
+	{ name: "Book 2", genre: "Fiction", id: "2", authorId: '2' },
+	{ name: "Book 3", genre: "Non-fiction", id: "3", authorId: '3' },
+	{ name: "Book 4", genre: "History", id: "4", authorId: '3' },
+	{ name: "Book 5", genre: "Scifi", id: "5", authorId: '1' },
+	{ name: "Book 6", genre: "Non-fiction", id: "6", authorId: '2' }
 ]
 
 // We want to bind authorId of the book, we can tag that to the actual author.
@@ -31,6 +35,7 @@ var authors = [
 const BookType = new GraphQLObjectType({
 	name: 'Book',
 	// He specifically used the ES6 function.
+	// These must be wrapped inside a function because they aren't ran right away. Otherwise, you'd get an error because stuff would be undefined.
 	fields: () => ({
 		id: { type: GraphQLID},
 		name: { type: GraphQLString },
@@ -52,6 +57,12 @@ const AuthorType = new GraphQLObjectType({
 		id: { type: GraphQLID},
 		name: { type: GraphQLString },
 		age: { type: GraphQLInt },
+		books: {
+			type: new GraphQLList(BookType),
+			resolve(parent, args){
+				return _.filter(books, { authorId: parent.id })
+			}
+		}
 	})
 })
 
