@@ -14,10 +14,12 @@ const {
 
 var books = [
 	// Note: ID's must be stored as strings. This is JSON
-	{ name: "Book1", genre: "Fantasy", id: "1" },
-	{ name: "Book2", genre: "Fiction", id: "2" },
-	{ name: "Book3", genre: "Non-fiction", id: "3" }
+	{ name: "Book1", genre: "Fantasy", id: "1", authorId: '2' },
+	{ name: "Book2", genre: "Fiction", id: "2", authorId: '2' },
+	{ name: "Book3", genre: "Non-fiction", id: "3", authorId: '3' }
 ]
+
+// We want to bind authorId of the book, we can tag that to the actual author.
 
 var authors = [
 	{ name: "Author 1", age: "34", id: "1" },
@@ -33,6 +35,13 @@ const BookType = new GraphQLObjectType({
 		id: { type: GraphQLID},
 		name: { type: GraphQLString },
 		genre: { type: GraphQLString },
+		author: {
+			type: AuthorType,
+			resolve(parent, args){
+				console.log(parent);
+				return _.find(authors, { id: parent.authorId });
+			}
+		}
 	})
 })
 
